@@ -3,7 +3,7 @@ apiVersion: tower.ansible.com/v1alpha1
 kind: AnsibleJob
 metadata:
   name: f5-update-dns-load-balancer
-  namespace: pacman
+  namespace: pacman-app
   labels:
     app.kubernetes.io/name: pacman
 spec:

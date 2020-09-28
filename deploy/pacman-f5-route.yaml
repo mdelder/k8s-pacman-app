@@ -2,7 +2,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: f5-gslb-pacman
-  namespace: pacman
+  namespace: pacman-app
   labels:
     app.kubernetes.io/name: f5-gslb-pacman
 spec:
