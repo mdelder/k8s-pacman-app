@@ -4,6 +4,8 @@ kind: Channel
 metadata:
   name: pacman-app-latest
   namespace: pacman-app
+  labels:
+    app.kubernetes.io/name: pacman
   annotations:
     apps.open-cluster-management.io/github-path: deploy
 spec:
