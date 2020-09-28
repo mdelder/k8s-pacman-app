@@ -7,7 +7,7 @@ metadata:
   labels:
     app.kubernetes.io/name: pacman
 spec:
-  tower_auth_secret: awx-tower-secret
+  tower_auth_secret: toweraccess
   job_template_name: f5-update-dns-load-balancer
   extra_vars:
     target_clusters:
