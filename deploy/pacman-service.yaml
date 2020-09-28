@@ -5,6 +5,7 @@ metadata:
   namespace: pacman-app
   labels:
     name: pacman
+    app.kubernetes.io/name: pacman
 spec:
   type: ClusterIP
   ports:
@@ -13,3 +14,4 @@ spec:
       protocol: TCP
   selector:
     name: pacman
+    app.kubernetes.io/name: pacman
