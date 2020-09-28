@@ -1,0 +1,15 @@
+---
+apiVersion: tower.ansible.com/v1alpha1
+kind: AnsibleJob
+metadata:
+  generateName: f5-update-dns-load-balancer-
+  namespace: pacman
+  labels:
+    app.kubernetes.io/name: pacman
+spec:
+  tower_auth_secret: awx-tower-secret
+  job_template_name: f5-update-dns-load-balancer
+  extra_vars:
+    target_clusters:
+      - charlie-zulu
+      - charlie-yankee
