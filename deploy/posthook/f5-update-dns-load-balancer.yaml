@@ -10,6 +10,9 @@ spec:
   tower_auth_secret: toweraccess
   job_template_name: f5-update-dns-load-balancer
   extra_vars:
-    target_clusters:
-      - charlie-zulu
-      - charlie-yankee
+    API_DOMAIN: demo.red-chesterfield.com
+    # The AWS Route53 NS Record must exist with NameServers:
+    # ns1.f5cloudservices.com
+    # ns2.f5cloudservices.com
+    GSLB_ZONE: www-apps
+    BASE_DOMAIN: quebec.demo.red-chesterfield.com
