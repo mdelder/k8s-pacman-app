@@ -65,8 +65,8 @@ spec:
     - key: region
       operator: In
       values:
-      - us-east
-      - us-west
+      - us-east-1
+      - us-west-1
       - europe-west3
     matchLabels:
       environment: dev
