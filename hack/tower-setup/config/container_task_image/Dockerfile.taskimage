@@ -1,0 +1,14 @@
+FROM registry.redhat.io/ansible-tower-37/ansible-tower-rhel7:3.7.2
+
+# Rollback to root to allow the pip3 install to succeed
+USER 0
+
+# RUN python3 -m ensurepip && pip3 install pysnow certifi kubernetes openshift jq dnspython
+
+ENV PIP_CMD=/var/lib/awx/venv/ansible/bin/pip2
+RUN $PIP_CMD install setuptools --upgrade && \
+    $PIP_CMD install pysnow certifi dnspython dig jq kubernetes openshift
+
+RUN curl -L -o /usr/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x /usr/bin/jq
+
+USER 1000
