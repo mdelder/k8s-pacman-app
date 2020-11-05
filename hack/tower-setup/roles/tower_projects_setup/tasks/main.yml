@@ -1,0 +1,110 @@
+
+- name: "Add credential type: F5 Cloud DNS Load Balancer"
+  awx.awx.tower_credential_type:
+    name: "F5 Cloud DNS Load Balancer"
+    kind: cloud
+    state: present
+    inputs:
+      fields:
+      - id: F5AAS_USER
+        type: string
+        label: F5 Cloud DNS Username
+      - id: F5AAS_PASS
+        type: string
+        label: F5 Cloud DNS Password
+        secret: true
+      required:
+        - F5AAS_USER
+        - F5AAS_PASS
+    injectors:
+      extra_vars:
+        F5AAS_USER: '{%raw%}{{ F5AAS_USER }}{%endraw%}'
+        F5AAS_PASS: '{%raw%}{{ F5AAS_PASS }}{%endraw%}'
+
+- name:  "Add credential: F5 Cloud DNS Load Balancer"
+  awx.awx.tower_credential:
+    name: F5 Cloud DNS Load Balancer Credential
+    organization: Default
+    credential_type: "F5 Cloud DNS Load Balancer"
+    state: present
+    inputs:
+      F5AAS_USER: "{{ f5aas_username }}"
+      F5AAS_PASS: "{{ f5aas_password }}"
+
+- name: "Add credential type: Service Now"
+  awx.awx.tower_credential_type:
+    name: "ServiceNow"
+    kind: cloud
+    state: present
+    inputs:
+      fields:
+      - id: SNOW_USERNAME
+        type: string
+        label: Service Now Username
+      - id: SNOW_INSTANCE
+        type: string
+        label: Service Now Instance Name (devXXXXX)
+      - id: SNOW_PASSWORD
+        type: string
+        label: Service Now Password
+        secret: true
+      required:
+        - SNOW_USERNAME
+        - SNOW_INSTANCE
+        - SNOW_PASSWORD
+    injectors:
+      extra_vars:
+        snow_username: '{%raw%}{{ SNOW_USERNAME }}{%endraw%}'
+        snow_password: '{%raw%}{{ SNOW_PASSWORD }}{%endraw%}'
+        snow_instance: '{%raw%}{{ SNOW_INSTANCE }}{%endraw%}'
+
+- name:  "Add credential: ServiceNow"
+  awx.awx.tower_credential:
+    name: ServiceNow Credential
+    organization: Default
+    credential_type: "ServiceNow"
+    state: present
+    inputs:
+      SNOW_USERNAME: "{{ snow_username }}"
+      SNOW_PASSWORD: "{{ snow_password }}"
+      SNOW_INSTANCE: "{{ snow_instance }}"
+
+- name: "Add Tower Project: \"snow-create-change-record\""
+  awx.awx.tower_project:
+    name: "snow-create-change-record"
+    description: "Service Now Change Requests"
+    organization: "Default"
+    state: present
+    scm_type: git
+    scm_url: https://github.com/mdelder/ansible-servicenow.git
+
+- name: "Add Job Template: \"snow-create-change-record\""
+  awx.awx.tower_job_template:
+    name: "snow-create-change-record"
+    inventory: "Demo Inventory"
+    project: "snow-create-change-record"
+    playbook: "servicenow_changerequest.yml"
+    ask_variables_on_launch: true
+    credentials:
+    - "ServiceNow Credential"
+
+- name: "Add Tower Project: \"f5-update-dns-load-balancer\""
+  awx.awx.tower_project:
+    name: "f5-update-dns-load-balancer"
+    description: "F5 Cloud DNS Load Balancer"
+    organization: "Default"
+    state: present
+    scm_type: git
+    scm_url: https://github.com/mdelder/f5-bd-gslb-tool.git
+    scm_branch: modified-for-tower
+
+
+- name: "Add Job Template: \"f5-update-dns-load-balancer\""
+  awx.awx.tower_job_template:
+    name: "f5-update-dns-load-balancer"
+    inventory: "Demo Inventory"
+    project: "f5-update-dns-load-balancer"
+    playbook: "src/gslb-commit-juliet.yaml"
+    ask_variables_on_launch: true
+    credentials:
+    - "F5 Cloud DNS Load Balancer Credential"
