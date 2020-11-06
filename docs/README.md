@@ -243,6 +243,9 @@ If you need to create an account with F5 Cloud DNS Load Balancer SaaS, you can d
     ansible-playbook -e ansible_python_interpreter="$PYTHON" tower-setup.yml
     ```
 
+## Setup Delegating Route53 for App
+
+## Configure toweraccess Secret and create Ansible Tower token
 
 # References
 
