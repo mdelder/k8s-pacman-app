@@ -1,14 +1,14 @@
 apiVersion: project.openshift.io/v1
 kind: Project
 metadata:
-  name: tower-resource-operator
+  name: tower-policies
 spec: {}
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: Channel
 metadata:
   name: tower-resource-operator
-  namespace: tower-resource-operator
+  namespace: tower-policies
   annotations:
     apps.open-cluster-management.io/github-path: hack/manifests/policies
 spec:
@@ -41,7 +41,7 @@ metadata:
     apps.open-cluster-management.io/git-branch: main
     apps.open-cluster-management.io/github-path: hack/manifests/policies
   name: tower-resource-operator
-  namespace: tower-resource-operator
+  namespace: tower-policies
   labels:
     app.kubernetes.io/name: tower-resource-operator
 spec:

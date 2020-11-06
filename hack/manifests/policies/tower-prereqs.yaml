@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: policy-ansible-resource-operator
+  name: policy-ansible-tower-prep
   namespace: tower-policies
   annotations:
     policy.open-cluster-management.io/standards: NIST-CSF
@@ -15,7 +15,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-ansible-resource-operator-project
+          name: policy-ansible-tower-prep-project
         spec:
           remediationAction: enforce # will be overridden by remediationAction in parent policy
           severity: high
@@ -28,13 +28,13 @@ spec:
                 apiVersion: project.openshift.io/v1
                 kind: Project
                 metadata:
-                  name: tower-resource-operator
+                  name: tower
                 spec: {}
     - objectDefinition:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: policy-ansible-resource-operator
+          name: policy-ansible-tower-prep
         spec:
           remediationAction: enforce # will be overridden by remediationAction in parent policy
           severity: high
@@ -44,61 +44,38 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                apiVersion: operators.coreos.com/v1
-                kind: OperatorGroup
+                kind: PersistentVolumeClaim
+                apiVersion: v1
                 metadata:
-                  annotations:
-                    olm.providedAPIs: AnsibleJob.v1alpha1.tower.ansible.com,JobTemplate.v1alpha1.tower.ansible.com
-                  name: tower-resource-operator-group
-                  namespace: tower-resource-operator
+                  name: postgresql
+                  namespace: tower
                 spec:
-                  targetNamespaces:
-                  - tower-resource-operator
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-ansible-resource-operator
-        spec:
-          remediationAction: enforce # will be overridden by remediationAction in parent policy
-          severity: high
-          namespaceSelector:
-            exclude: ["kube-*"]
-            include: ["*"]
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: operators.coreos.com/v1alpha1
-                kind: Subscription
-                metadata:
-                  name: awx-resource-operator
-                  namespace: tower-resource-operator
-                spec:
-                  channel: release-0.1
-                  installPlanApproval: Automatic
-                  name: awx-resource-operator
-                  source: redhat-operators
-                  sourceNamespace: openshift-marketplace
-                  startingCSV: awx-resource-operator.v0.1.0
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 5Gi
+                #  storageClassName: gp2
+                  volumeMode: Filesystem
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-ansible-resource-operator
+  name: binding-policy-ansible-tower-prep
   namespace: tower-policies
 placementRef:
-  name: placement-policy-ansible-resource-operator
+  name: placement-policy-ansible-tower-prep
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: policy-ansible-resource-operator
+- name: policy-ansible-tower-prep
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: placement-policy-ansible-resource-operator
+  name: placement-policy-ansible-tower-prep
   namespace: tower-policies
 spec:
   clusterConditions:
