@@ -1,0 +1,117 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: tower-resource-operator
+spec: {}
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-ansible-resource-operator
+  namespace: tower-resource-operator
+  annotations:
+    policy.open-cluster-management.io/standards: NIST-CSF
+    policy.open-cluster-management.io/categories: PR.IP Information Protection Processes and Procedures
+    policy.open-cluster-management.io/controls: PR.IP-1 Baseline configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ansible-resource-operator-project
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: project.openshift.io/v1
+                kind: Project
+                metadata:
+                  name: tower-resource-operator
+                spec: {}
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ansible-resource-operator
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  annotations:
+                    olm.providedAPIs: AnsibleJob.v1alpha1.tower.ansible.com,JobTemplate.v1alpha1.tower.ansible.com
+                  name: tower-resource-operator-group
+                  namespace: tower-resource-operator
+                spec:
+                  targetNamespaces:
+                  - tower-resource-operator
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-ansible-resource-operator
+        spec:
+          remediationAction: enforce # will be overridden by remediationAction in parent policy
+          severity: high
+          namespaceSelector:
+            exclude: ["kube-*"]
+            include: ["*"]
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  name: awx-resource-operator
+                  namespace: tower-resource-operator
+                spec:
+                  channel: release-0.1
+                  installPlanApproval: Automatic
+                  name: awx-resource-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+                  startingCSV: awx-resource-operator.v0.1.0
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-ansible-resource-operator
+  namespace: tower-resource-operator
+placementRef:
+  name: placement-policy-ansible-resource-operator
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+- name: policy-ansible-resource-operator
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-ansible-resource-operator
+  namespace: tower-resource-operator
+spec:
+  clusterConditions:
+  - status: "True"
+    type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      []  # selects all clusters if not specified
+    matchLabels:
+      name: local-cluster
