@@ -1,0 +1,627 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: cloud-metadata
+  namespace: provider
+spec:
+  componentKinds:
+  - group: apps.open-cluster-management.io
+    kind: Subscription
+  descriptor: {}
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - cloud
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-0
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-0
+  namespace: cloud-resource-ns-0
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-0
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-0/cloud-resource-0
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-0
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-0
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-1
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-1
+  namespace: cloud-resource-ns-1
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-1
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-1/cloud-resource-1
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-1
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-1
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-2
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-2
+  namespace: cloud-resource-ns-2
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-2
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-2/cloud-resource-2
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-2
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-2
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-3
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-3
+  namespace: cloud-resource-ns-3
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-3
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-3/cloud-resource-3
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-3
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-3
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-4
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-4
+  namespace: cloud-resource-ns-4
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-4
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-4/cloud-resource-4
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-4
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-4
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-5
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-5
+  namespace: cloud-resource-ns-5
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-5
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-5/cloud-resource-5
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-5
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-5
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-6
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-6
+  namespace: cloud-resource-ns-6
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: master
+    apps.open-cluster-management.io/git-path: cloud-provider/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-6
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-6/cloud-resource-6
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-6
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-6
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-7
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-7
+  namespace: cloud-resource-ns-7
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path:
+  labels:
+    app: cloud
+  name: cloud-subscription-7
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-7/cloud-resource-7
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-7
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-7
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-8
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-8
+  namespace: cloud-resource-ns-8
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path:
+  labels:
+    app: cloud
+  name: cloud-subscription-8
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-8/cloud-resource-8
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-8
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-8
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-9
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-9
+  namespace: cloud-resource-ns-9
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path: placement/nginx
+  labels:
+    app: cloud
+  name: cloud-subscription-9
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-9/cloud-resource-9
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-9
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-9
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-10
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-10
+  namespace: cloud-resource-ns-10
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path:
+  labels:
+    app: cloud
+  name: cloud-subscription-10
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-10/cloud-resource-10
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-10
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-10
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-11
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-11
+  namespace: cloud-resource-ns-11
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path:
+  labels:
+    app: cloud
+  name: cloud-subscription-11
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-11/cloud-resource-11
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-11
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-11
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloud-resource-ns-12
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: cloud-resource-12
+  namespace: cloud-resource-ns-12
+spec:
+  type: Git
+  pathname: 'https://github.com/open-cluster-management/demo-subscription-gitops.git'
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+    apps.open-cluster-management.io/git-path:
+  labels:
+    app: cloud
+  name: cloud-subscription-12
+  namespace: provider
+spec:
+  channel: cloud-resource-ns-12/cloud-resource-12
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: cloud-placement-12
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: cloud
+  name: cloud-placement-12
+  namespace: provider
+spec:
+  clusterSelector:
+    matchLabels:
+      'cloud': 'Amazon'
+      'region': 'eu-central-1'
+  clusterConditions:
+    - type: ManagedClusterConditionAvailable
+      status: "True"
