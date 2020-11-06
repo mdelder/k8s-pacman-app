@@ -45,7 +45,7 @@ metadata:
   labels:
     app.kubernetes.io/name: tower-resource-operator
 spec:
-  channel: tower-resource-operator/tower-resource-operator
+  channel: tower-policies/tower-resource-operator
   placement:
     local: true
 
