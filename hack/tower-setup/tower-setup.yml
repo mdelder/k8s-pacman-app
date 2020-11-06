@@ -1,0 +1,14 @@
+---
+
+- name: Setup Ansible Tower Projects
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  run_once: true
+  vars_files:
+    - group_vars/credentials.yml
+
+  tasks:
+  - include_role:
+      name: tower_projects_setup
+

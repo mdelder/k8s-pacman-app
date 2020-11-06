@@ -1,0 +1,25 @@
+---
+tower_package_name: 'ansible-tower'
+tower_package_version: '3.7.2'
+tower_package_release: '1'
+
+kubernetes_deployment_name: ansible-tower
+
+kubernetes_web_image: registry.redhat.io/ansible-tower-37/ansible-tower-rhel7
+# kubernetes_task_image: registry.redhat.io/ansible-tower-37/ansible-tower-rhel7
+kubernetes_task_image: quay.io/mdelder/ansible-tower-task
+kubernetes_redis_image: registry.redhat.io/rhscl/redis-5-rhel7
+kubernetes_redis_config_mount_path: "/etc/redis.conf"
+kubernetes_memcached_image: registry.redhat.io/ansible-tower-37/ansible-tower-memcached-rhel7
+
+kubernetes_task_version: '3.7.2'
+kubernetes_web_version: '3.7.2'
+
+insights_url_base: "https://cloud.redhat.com"
+candlepin_host: "https://subscription.rhsm.redhat.com"
+candlepin_verify: "/etc/rhsm/ca/redhat-uep.pem"
+automation_analytics_url: "https://cloud.redhat.com/api/ingress/v1/upload"
+insights_agent_mime: "application/vnd.redhat.tower.analytics+tgz"
+
+container_groups_image: "registry.redhat.io/ansible-tower-37/ansible-runner-rhel7"
+uwsgi_bash: "scl enable rh-postgresql10"
