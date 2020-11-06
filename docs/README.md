@@ -57,37 +57,34 @@ sshKey: |
 
 The RHACM product can be deployed directly from the Red Hat Operator Catalog or by using the instructions documented at [github.com/open-cluster-management/deploy](https://github.com/open-cluster-management/deploy).
 
-## Deploy Ansible Tower.
+## Deploy Ansible Tower and the Ansible Resource Operator
 
 Detailed instructions on setting up the Ansible Tower container-based installation method are available at [docs.ansible.com](https://docs.ansible.com/ansible-tower/3.7.1/html/administration/openshift_configuration.html). The following steps capture the specific actions taken to prepare the demo captured in this repository.
 
-1. Download the Ansible Tower installer release from the [available releases](https://releases.ansible.com/ansible-tower/setup_openshift/).
+1. Apply the policies under `hack/manifests/policies`.
 
-2. Create the `ansible-tower` project if necessary (the installer will create the project if the user credential has sufficient permissions):
+  ```bash
+  cd hack/manifests
+  oc apply -f ansible-tower-policies-subscription.yaml
+  ```
 
-    ```bash
-    oc new-project ansible-tower
-    ```
+  The result of these policies will setup the (a) Ansible Resource Operator, (b) prepare the Ansible Tower `Project` named `tower` and (c) create a `PeristentVolumeClaim` using the default storage class to support Ansible Tower's database (PostgresSQL).
 
-3. Configure a PersistentVolumeClaim against your OpenShift cluster (and ensure the correct name is reflected in your `inventory` file):
+  After a few moments, verify the resources were correctly applied on your Hub cluster. You can view the Policies `policy-ansible-tower-prep` and `policy-auth-provider` are Compliant from your RHACM web console (under "Govern Risk"). You can also verify the resources that were created as follows:
 
-    ```yaml
-    kind: PersistentVolumeClaim
-    apiVersion: v1
-    metadata:
-    name: postgresql
-    namespace: ansible-tower
-    spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-        storage: 5Gi
-    storageClassName: gp2
-    volumeMode: Filesystem
-    ```
+  ```bash
+  oc get subs.operators --all-namespaces
+  NAMESPACE                 NAME                        PACKAGE                       SOURCE                CHANNEL
+  open-cluster-management   acm-operator-subscription   advanced-cluster-management   acm-custom-registry   release-2.1
+  tower-resource-operator   awx-resource-operator       awx-resource-operator         redhat-operators      release-0.1
 
-4. Configure the inventory for your OpenShift cluster.
+  oc get pvc -n tower
+  NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+  postgresql   Bound    pvc-1554a179-0947-4a65-9af0-81c5f2d8b476   5Gi        RWO            gp2            3d20h
+  ```
+2. Download the Ansible Tower installer release from the [available releases](https://releases.ansible.com/ansible-tower/setup_openshift/). Extract the archive into a working directory.
+
+3. Configure the inventory for your OpenShift cluster. The `inventory` file should be placed directly under the folder for the archive (e.g. `ansible-tower-openshift-setup-3.7.2/inventory`).
 
     The following example `inventory` can be placed under the root directory of the extracted release archive. Be sure to override:
 
@@ -150,7 +147,7 @@ Detailed instructions on setting up the Ansible Tower container-based installati
     # kubernetes_namespace=ansible-tower
     ```
 
-5. Update the default task image that is used to run the defined Jobs. Because the Jobs use additional modules, we need to ensure that various python module dependencies are available.
+4. Update the default task image that is used to run the defined Jobs. Because the Jobs use additional modules, we need to ensure that various python module dependencies are available.
 
     In `group_vars/all`, update the following key:
     ```yaml
@@ -166,13 +163,13 @@ Detailed instructions on setting up the Ansible Tower container-based installati
     docker push quay.io/YOUR_USERID/ansible-tower-task:3.7.2
     ```
 
-6. Run the installer.
+5. Run the installer.
 
     ```bash
     ./setup_openshift.sh
     ```
 
-7. Launch the Tower web console.
+6. Launch the Tower web console.
 
     ```bash
     open https://$(oc get route -n tower ansible-tower-web-svc -ojsonpath='{.status.ingress[0].host}')
@@ -180,12 +177,26 @@ Detailed instructions on setting up the Ansible Tower container-based installati
 
     Login with the user and password that you specified in the `inventory` file above. You must then choose your license for Tower. If you have a Red Hat user identity, you can login and choose the 60-day evaluation license.
 
+7. Optionally, cusomtize the `hack/manifests/ansible-tower-console-link.yaml` for your own cluster. Then apply the file (NOTE: You must update the URL within the file before this will work in your cluster).
+
+    ```bash
+    cd hack/manifests
+    oc apply ansible-twoer-console-link.yaml
+    ```
+
+    After applying the `ConsoleLink`, refresh your OpenShift web console and view the shortcut to your Ansible Tower under the "Applications" drop down in the header.
 
 ## Configure projects for ServiceNow and F5 Cloud DNS Load Balancer.
 
+The example application uses the F5 Cloud DNS Load Balancer service and ServiceNow to demonstrate Ansible automation.
+
+If you need a developer instance of ServiceNow, follow the directions at https://developer.servicenow.com/.
+
+If you need to create an account with F5 Cloud DNS Load Balancer SaaS, you can do this through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/F5-Networks-F5-DNS-Load-Balancer-Cloud-Service/B07W3P8HM4).
+
 1. Create a file named `tower_cli.cfg` under `hack/tower-setup` with the following contents:
 
-    ```
+    ```bash
     [general]
     host = https://ansible-tower-web-svc-tower.apps.cluster.baseDomain
     verify_ssl = false
@@ -200,24 +211,45 @@ Detailed instructions on setting up the Ansible Tower container-based installati
     oc get route -n tower ansible-tower-web-svc -ojsonpath='{.status.ingress[0].host}'
     ```
 
-2. You may need to install required python libraries.
+2. Create a file named `credentials.yml` under `hack/tower-setup/group_vars` with the following contents:
+
+    ```yaml
+    # User and password for the F5 CloudServices account.
+    f5aas_username: SPECIFY_YOUR_F5_USERNAME
+    f5aas_password: SPECIFY_YOUR_F5_PASSWORD
+
+    # Credentials for ServiceNow
+    snow_username: admin
+    snow_password: SPECIFY_YOUR_SERVICENOW_USERNAME
+    # Specify your ServiceNow developer instance ID.
+    snow_instance: devXXXXX
+    ```
+
+3. You may need to install required python libraries.
 
     ```bash
+    # Optionally specify the correct version of python required by Ansible
+    # Of course, you must update the PYTHON var specific to your environment
     export PYTHON="/usr/local/Cellar/ansible/2.9.13/libexec/bin/python3.8"
     $PYTHON -m pip install --upgrade ansible-tower-cli
     ```
 
-Run the playbook
+4. Run the playbook
 
+    ```bash
+    # Optionally specify the correct version of python required by Ansible
+    # Of course, you must update the PYTHON var specific to your environment
     export PYTHON="/usr/local/Cellar/ansible/2.9.13/libexec/bin/python3.8"
-
     ansible-playbook -e ansible_python_interpreter="$PYTHON" tower-setup.yml
+    ```
 
-## Deploy AWX Resource Operator.
 
+# References
 
-References
-
-https://docs.ansible.com/ansible/latest/collections/awx/awx/tower_project_module.html
-https://github.com/ansible/awx
-https://github.com/ansible/awx/tree/devel/awx_collection#running
+- [github.com/open-cluster-management/deploy](https://github.com/open-cluster-management/deploy)
+- [Ansible Tower containerized install method](https://releases.ansible.com/ansible-tower/setup_openshift/)
+- https://docs.ansible.com/ansible/latest/collections/awx/awx/tower_project_module.html
+- https://github.com/ansible/awx
+- https://github.com/ansible/awx/tree/devel/awx_collection#running
+- https://developer.servicenow.com/
+- [AWS Marketplace](https://aws.amazon.com/marketplace/pp/F5-Networks-F5-DNS-Load-Balancer-Cloud-Service/B07W3P8HM4)
