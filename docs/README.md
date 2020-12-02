@@ -181,7 +181,7 @@ Detailed instructions on setting up the Ansible Tower container-based installati
 
     ```bash
     cd hack/manifests
-    oc apply ansible-twoer-console-link.yaml
+    oc apply ansible-tower-console-link.yaml
     ```
 
     After applying the `ConsoleLink`, refresh your OpenShift web console and view the shortcut to your Ansible Tower under the "Applications" drop down in the header.
@@ -190,9 +190,13 @@ Detailed instructions on setting up the Ansible Tower container-based installati
 
 The example application uses the F5 Cloud DNS Load Balancer service and ServiceNow to demonstrate Ansible automation.
 
-If you need a developer instance of ServiceNow, follow the directions at https://developer.servicenow.com/.
+The following steps assume that you have:
 
-If you need to create an account with F5 Cloud DNS Load Balancer SaaS, you can do this through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/F5-Networks-F5-DNS-Load-Balancer-Cloud-Service/B07W3P8HM4).
+  - **Created a developer instance of ServiceNow.** If you need a developer instance of ServiceNow, follow the directions at https://developer.servicenow.com/.
+  - **Created an account with the F5 Cloud DNS Load Balancer service.** If you need to create an account with F5 Cloud DNS Load Balancer SaaS, you can do this through the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/F5-Networks-F5-DNS-Load-Balancer-Cloud-Service/B07W3P8HM4).
+  - **Delegated your global domain to the F5 DNS Nameservers**. Created an `NS` delegating DNS record with the global domain that you will use with F5. You can do this via Route53 or your DNS provider. The [F5 DNS Load Balancer Cloud Service FAQ](https://clouddocs.f5.com/cloud-services/latest/f5-cloud-services-GSLB-FAQ.html) answers questions related to this prerequisite.
+
+Once you have the credentials for the services above, you can configure the Ansible Tower instance that you deployed above with the two relevant Ansible Projects that provide the Job Templates that will be executed as part of the prehook and posthooks that run when the application is placed or removed on a cluster.
 
 1. Create a file named `tower_cli.cfg` under `hack/tower-setup` with the following contents:
 
@@ -243,9 +247,43 @@ If you need to create an account with F5 Cloud DNS Load Balancer SaaS, you can d
     ansible-playbook -e ansible_python_interpreter="$PYTHON" tower-setup.yml
     ```
 
-## Setup Delegating Route53 for App
-
 ## Configure toweraccess Secret and create Ansible Tower token
+
+From Ansible Tower, create an authorization token. The authorization token will be used in a `Secret` that the application will reference to invoke the Ansible Tower Jobs.
+
+- Login to the Ansible Tower instance.
+
+    ```bash
+    open https://$(oc get route -n tower ansible-tower-web-svc -ojsonpath='{.status.ingress[0].host}')
+    ```
+
+- Click on the "admin" user in the header.
+- Click on "Tokens".
+- Click on the "+"
+- Set the scope to "Write"
+- Click "Save" and **BE SURE** to copy and save the value of the token.
+- Create a file named `hack/manifests/toweraccess-secret.yaml` with the following contents:
+
+```yaml
+apiVersion: v1
+stringData:
+  host: ansible-tower-web-svc-tower.apps.SPECIFY_YOUR_CLUSTER_NAME.SPECIFY_YOUR_BASE_DOMAIN
+  token: SPECIFY_YOUR_ANSIBLE_TOWER_ADMIN_TOKEN
+kind: Secret
+metadata:
+  name: toweraccess
+  namespace: pacman-app
+type: Opaque
+```
+
+## Deploy the pacman-app example to your cluster
+
+- Create the `Project` for the application and apply the `Secret`:
+```bash
+oc new-project pacman-app
+oc apply -f hack/manifests/toweraccess-secret.yaml
+```
+- Now you can create the `pacman-app` from the New Application wizard in the RHACM web console.
 
 # References
 
