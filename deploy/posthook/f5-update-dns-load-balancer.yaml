@@ -15,4 +15,4 @@ spec:
     # ns1.f5cloudservices.com
     # ns2.f5cloudservices.com
     GSLB_ZONE: www-apps
-    BASE_DOMAIN: oscar.demo.red-chesterfield.com
+    BASE_DOMAIN: romeo.demo.red-chesterfield.com
