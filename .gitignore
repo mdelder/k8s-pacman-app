@@ -1,3 +1,4 @@
 tower_cli.cfg
 credentials.yml
 toweraccess-secret.yaml
+.bin/

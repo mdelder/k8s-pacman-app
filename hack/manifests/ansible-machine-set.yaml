@@ -1,0 +1,69 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/GPU: '0'
+    machine.openshift.io/memoryMb: '16384'
+    machine.openshift.io/vCPU: '8'
+  name: foxtrot-lnt6t-worker-us-east-1d-ansible
+  namespace: openshift-machine-api
+  labels:
+    machine.openshift.io/cluster-api-cluster: foxtrot-lnt6t
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: foxtrot-lnt6t
+      machine.openshift.io/cluster-api-machineset: foxtrot-lnt6t-worker-us-east-1d-ansible
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: foxtrot-lnt6t
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: foxtrot-lnt6t-worker-us-east-1d-ansible
+    spec:
+      metadata: {}
+      providerSpec:
+        value:
+          userDataSecret:
+            name: worker-user-data
+          placement:
+            availabilityZone: us-east-1d
+            region: us-east-1
+          credentialsSecret:
+            name: aws-cloud-credentials
+          instanceType: m5.2xlarge
+          blockDevices:
+            - ebs:
+                encrypted: true
+                iops: 4000
+                kmsKey:
+                  arn: ''
+                volumeSize: 250
+                volumeType: io1
+          securityGroups:
+            - filters:
+                - name: 'tag:Name'
+                  values:
+                    - foxtrot-lnt6t-worker-sg
+          kind: AWSMachineProviderConfig
+          tags:
+            - name: kubernetes.io/cluster/foxtrot-lnt6t
+              value: owned
+            - name: owner
+              value: mdelder@redhat.com
+            - name: purpose
+              value: demo
+          deviceIndex: 0
+          ami:
+            id: ami-04a16d506e5b0e246
+          subnet:
+            filters:
+              - name: 'tag:Name'
+                values:
+                  - foxtrot-lnt6t-private-us-east-1d
+          apiVersion: awsproviderconfig.openshift.io/v1beta1
+          iamInstanceProfile:
+            id: foxtrot-lnt6t-worker-profile
+
