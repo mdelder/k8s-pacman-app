@@ -44,7 +44,7 @@ I've only tested this with multiple AWS regions.
 
 >Note: The PVC will be unbound until the tower pod is created in the following steps below
 
-2. Download the OCP installation tarball: [Tower3.7.2](https://releases.ansible.com/ansible-tower/setup_openshift/ansible-tower-openshift-setup-3.7.2-1.tar.gz) on your laptop. Make sure you are using 3.7.x and not 3.8 due to Python version dependencies used by the task container.
+2. Download the Tower-on-OCP installation tarball: [Tower3.7.2](https://releases.ansible.com/ansible-tower/setup_openshift/ansible-tower-openshift-setup-3.7.2-1.tar.gz) on your laptop. Make sure you are using 3.7.x and not 3.8 due to Python version dependencies used by the task container.
 
 3. Untar this file and update the inventory file as specified in the main README file. Specifically be sure to override:
 
