@@ -62,6 +62,7 @@ I've only tested this with multiple AWS regions.
    ```
 
 Follow the remaining steps for Tower from the main README file (Repeated below for convenience):
+
 6. Run the installer.
 
     ```bash
@@ -89,7 +90,8 @@ Follow the remaining steps for Tower from the main README file (Repeated below f
 ### Set up the F5 Global DNS Load Balancing service:
 
 1. On your AWS Route53 domain(Hosted Zone), create a NS record. Example: If your hosted zone is rhtelco.io, create a record called gslb.rhtelco.io. Create it as a NS record.
-![](images/route53.png ). Basically all traffic to this subdomain is being sent to the F5 cloud DNS servers for IP resolution.
+![](images/route53.png ).
+Basically all traffic to this subdomain is being sent to the F5 cloud DNS servers for IP resolution.
 
 2. On F5, set up the DNS Service. Navigate to *DNS > Create > Primary Zone* ![](images/F5PrimaryZone.png)
 
