@@ -6,7 +6,7 @@ I've only tested this with multiple AWS regions.
 
 ## Pre-Reqs
 
-1. ACM is installed on a beefy OCP cluster. See the [https://github.com/RedHatTelco/k8s-pacman-app#install-configyaml](install_config) provided in the main README file. I found that if you also have cluster monitoring enabled, you will need 5 workers (total of 8 m5.xlarge nodes) for installing tower on the hub cluster.
+1. ACM is installed on a beefy OCP cluster. See the [install_config](https://github.com/mdelder/k8s-pacman-app#install-configyaml) provided in the main README file. I found that if you also have cluster monitoring enabled, you will need 5 workers (total of 8 m5.xlarge nodes) for installing tower on the hub cluster.
 
 2. **Create a developer instance of ServiceNow.** If you need a developer instance of ServiceNow, follow the directions at https://developer.servicenow.com/.
 
@@ -44,7 +44,7 @@ I've only tested this with multiple AWS regions.
 
 >Note: The PVC will be unbound until the tower pod is created in the following steps below
 
-2. Download the OCP installation tarball: [https://releases.ansible.com/ansible-tower/setup_openshift/ansible-tower-openshift-setup-3.7.2-1.tar.gz](Tower 3.7.2) on your laptop. Make sure you are using 3.7.x and not 3.8 due to Python version dependencies used by the task container.
+2. Download the OCP installation tarball: [Tower3.7.2](https://releases.ansible.com/ansible-tower/setup_openshift/ansible-tower-openshift-setup-3.7.2-1.tar.gz) on your laptop. Make sure you are using 3.7.x and not 3.8 due to Python version dependencies used by the task container.
 
 3. Untar this file and update the inventory file as specified in the main README file. Specifically be sure to override:
 
@@ -99,7 +99,7 @@ Follow the remaining steps for Tower from the main README file (Repeated below f
 
 ### Configure Tower
 
-Follow the steps listed in the main README file to  [https://github.com/RedHatTelco/k8s-pacman-app#configure-projects-for-servicenow-and-f5-cloud-dns-load-balancer](set up Tower) and to [https://github.com/RedHatTelco/k8s-pacman-app#configure-toweraccess-secret-and-create-ansible-tower-token](set up the tower secret on ACM)
+Follow the steps listed in the main README file to [ set up Tower](https://github.com/RedHatTelco/k8s-pacman-app#configure-projects-for-servicenow-and-f5-cloud-dns-load-balancer) and to [set up the tower secret on ACM](https://github.com/RedHatTelco/k8s-pacman-app#configure-toweraccess-secret-and-create-ansible-tower-token)
 
 ### Deploying the application
 
@@ -135,7 +135,7 @@ spec:
 # When the posthook job runs you will have a load balanced DNS name that looks like this: pacman.www-apps.gslb.rhtelco.io
 ```
 
-3. Deploy the app from this repo on the ACM hub: `https://github.com/open-cluster-management/demo-subscription-gitops/tree/master/cloud-provider. This step is necessary for the demo to display the correct cloud service provider and region that the app was deployed on. Note that your clusters have to be in one of the regions in the documentation or you will need to create the necessary updates.
+3. Deploy the app from this repo on the ACM hub: https://github.com/open-cluster-management/demo-subscription-gitops/tree/master/cloud-provider. This step is necessary for the demo to display the correct cloud service provider and region that the app was deployed on. Note that your clusters have to be in one of the regions in the documentation or you will need to create the necessary updates.
 
 4. Now you are ready to deploy the pacman app from ACM. After deploying the app you should see the deployment as follows: ![Alt Text](images/pacman.png )
 
