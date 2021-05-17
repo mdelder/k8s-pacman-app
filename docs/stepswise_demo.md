@@ -29,17 +29,15 @@ I've only tested this with multiple AWS regions.
 
   After a few moments, verify the resources were correctly applied on your Hub cluster. You can view the Policies `policy-ansible-tower-prep` and `policy-auth-provider` are Compliant from your RHACM web console (under "Govern Risk"). You can also verify the resources that were created as follows:
 
-#TODO: Update this output
-
-  ```bash
+```bash
   oc get subs.operators --all-namespaces
   NAMESPACE                 NAME                        PACKAGE                       SOURCE                CHANNEL
   open-cluster-management   acm-operator-subscription   advanced-cluster-management   acm-custom-registry   release-2.1
   tower-resource-operator   awx-resource-operator       awx-resource-operator         redhat-operators      release-0.1
 
   oc get pvc -n tower
-  NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-  postgresql   Bound    pvc-1554a179-0947-4a65-9af0-81c5f2d8b476   5Gi        RWO            gp2            3d20h
+  NAME         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+  postgresql   Pending                                      gp2            82s
 ```
 
 >Note: The PVC will be unbound until the tower pod is created in the following steps below
